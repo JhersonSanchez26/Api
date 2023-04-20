@@ -2,28 +2,34 @@ const express = require('express');
 const mongoose = require('mongoose');
 const user = require('./user.controller');
 const app = express();
+const { Auth, isAuthenticated } = require('./auth.controller');
 const port = 3000;
 
 app.use(express.json());
 mongoose.connect('mongodb+srv://jhersonsanchez26:Gaby8031756..@cluster0.dku7tvb.mongodb.net/miapp?retryWrites=true&w=majority');
 
 //Agregando endpoint GET
-app.get('/users', user.get)
+app.get('/users', isAuthenticated, user.get)
 
 //Agregando endpoint GET:id
-app.get('/users/:id', user.getId)
+app.get('/users/:id', isAuthenticated, user.getId)
 
 //Agregando endpoint POST
-app.post('/users', user.create)
+app.post('/users', isAuthenticated, user.create)
 
 //Agregando endpoint PUT
-app.put('/users/:id', user.update)
+app.put('/users/:id', isAuthenticated, user.update)
 
 //Agregando endpoint PATCH
 app.patch('/users/:id', (req, res) => {
     res.sendStatus(204);
 })
 
+
+//Agregando endpoint Login
+app.post('/login', Auth.login)
+    //Agregando endpoint Register
+app.post('/Register', Auth.register)
 
 //Agregando endpoint DELETE
 app.delete('/users/:id', user.destroy)
@@ -47,4 +53,4 @@ app.post('*', (req, res) => {
 });
 
 
-app.listen(port, user.listen)
+app.listen(port, user.listen);

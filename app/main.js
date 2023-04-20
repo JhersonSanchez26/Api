@@ -83,12 +83,45 @@ const addForListener = () => {
     }
 }
 
-//Usamos la función window.load para cargar el html y despues el javascript
-window.onload = () => {
+//Chequeamos en localStorage si existe un archivo jwt para poder cargar la pagina.
+const checkLogin = () => localStorage.getItem('jwt')
 
+
+const userPage = () => {
     //Llamamos la función que cargara el template
     loadIniciaTemplate();
     addForListener();
     getUsers();
 
+}
+
+const loadLogintemplate = () => {
+    const template =
+        `<h1>Login</h1>
+            <form id="login-form">
+            <div>
+            <label>Correo</label>
+            <input name="email" />
+            </div>
+            <div>
+            <label>Contraseña</label>
+            <input  "name="password" />
+            </div>
+            <button type="sumit">Enviar</button>
+            </form>
+            <div id="error"></div>
+        `
+    const body = document.getElementsByTagName('body')[0]
+    body.innerHTML = template;
+}
+
+//Usamos la función window.load para cargar el html y despues el javascript
+window.onload = () => {
+    //Verificamos si el usuario a iniciado sesión
+    const isLoggedIn = checkLogin();
+    if (isLoggedIn) {
+        userPage();
+    } else {
+        loadLogintemplate();
+    }
 }
