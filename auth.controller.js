@@ -6,6 +6,10 @@ const jwt = require('jsonwebtoken');
 const UserModel = require('./User.model')
 
 //1-.Creamos Medlewear de verificación y encriptación
+/*Validar Json de petición get del usuario. Antes de arrancar la app se debe correr la variable de
+entorno con la siguiente ruta en la terminal: $env:SECRET = “secreto-id” y para mostrar: $env:SECRET
+Si no se realiza el proceso el servidor generara un error debido a que no se tiene definida la variable 
+de entorno*/
 
 const validateJwt = expressJwt({ secret: process.env.SECRET, algorithms: ['HS256'] });
 
@@ -76,8 +80,8 @@ const Auth = {
                 const signed = singToken(user._id);
                 res.send(signed);
             }
-        } catch (error) {
-            res.status(500).send(error.menssage)
+        } catch (err) {
+            res.status(500).send(err.menssage)
         }
     }
 }

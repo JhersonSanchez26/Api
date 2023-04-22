@@ -13,7 +13,7 @@ const loadIniciaTemplate = () => {
         <label>Apellido</label>
         <input name="lastName" />
         </div>
-        <button type="sumit">Enviar</button>
+        <button type="submit">Enviar</button>
         </form>
         <ul id="user-list"></ul>
         `
@@ -88,12 +88,73 @@ const checkLogin = () => localStorage.getItem('jwt')
 
 
 const userPage = () => {
-    //Llamamos la función que cargara el template
+    //Llamamos la función que cargara el template Login
     loadIniciaTemplate();
     addForListener();
     getUsers();
 
 }
+
+const loadRegisterTemplate = () => {
+    const template =
+        `<h1>Registro</h1>
+            <form id="register-form">
+            <div>
+            <label>Correo</label>
+            <input name="email" />
+            </div>
+            <div>
+            <label>Contraseña</label>
+            <input  name="password" />
+            </div>
+            <button type="submit">Enviar</button>
+            </form>
+            <a href="#" id="login">Iniciar sesión</a>
+            <div id="error"></div>
+        `
+    const body = document.getElementsByTagName('body')[0]
+    body.innerHTML = template;
+}
+const addRegistirListener = () => {
+    const registerForm = document.getElementById('register-form');
+    registerForm.onsubmit = async(e) => {
+        e.preventDefault();
+        const formData = new FormData(registerForm);
+        const data = Object.fromEntries(formData.entries());
+        const response = await fetch('/register', {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        const responseData = await response.text();
+        if (response.status > 300) {
+            const errorNode = document.getElementById('error')
+            errorNode.innerHTML = responseData;
+        } else {
+            console.log(responseData);
+        }
+    }
+}
+const gotoLoginListener = () => {}
+
+const registerPage = () => {
+    //Llamamos la función que cargara el template Registro
+    console.log('Pagina de registro');
+    loadRegisterTemplate();
+    addRegistirListener();
+    gotoLoginListener();
+
+}
+
+const loginPage = () => {
+    loadLogintemplate();
+    addLoginListener();
+    gotoRegisterListener();
+
+}
+
 
 const loadLogintemplate = () => {
     const template =
@@ -105,14 +166,49 @@ const loadLogintemplate = () => {
             </div>
             <div>
             <label>Contraseña</label>
-            <input  "name="password" />
+            <input  name="password" />
             </div>
-            <button type="sumit">Enviar</button>
+            <button type="submit">Enviar</button>
             </form>
+            <a href="#" id="register">Registrarse</a>
             <div id="error"></div>
         `
     const body = document.getElementsByTagName('body')[0]
     body.innerHTML = template;
+}
+
+const gotoRegisterListener = () => {
+    const gotoRegister = document.getElementById('register');
+    gotoRegister.onclick = (e) => {
+        e.preventDefault();
+        registerPage();
+    }
+}
+
+//Accedemos al formulario y cambiamos la acción del boton sumit
+const addLoginListener = () => {
+    const loginForm = document.getElementById('login-form');
+    loginForm.onsubmit = async(e) => {
+        e.preventDefault();
+        const formData = new FormData(loginForm);
+        const data = Object.fromEntries(formData.entries());
+        const response = await fetch('/login', {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+
+        const responseData = await response.text();
+        if (response.status > 300) {
+            const errorNode = document.getElementById('error')
+            errorNode.innerHTML = responseData;
+        } else {
+            console.log(responseData);
+        }
+    }
+
 }
 
 //Usamos la función window.load para cargar el html y despues el javascript
@@ -122,6 +218,6 @@ window.onload = () => {
     if (isLoggedIn) {
         userPage();
     } else {
-        loadLogintemplate();
+        loginPage();
     }
 }

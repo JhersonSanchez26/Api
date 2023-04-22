@@ -29,7 +29,7 @@ app.patch('/users/:id', (req, res) => {
 //Agregando endpoint Login
 app.post('/login', Auth.login)
     //Agregando endpoint Register
-app.post('/Register', Auth.register)
+app.post('/register', Auth.register)
 
 //Agregando endpoint DELETE
 app.delete('/users/:id', user.destroy)
