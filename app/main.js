@@ -23,8 +23,12 @@ const loadIniciaTemplate = () => {
 }
 
 const getUsers = async() => {
-    //Realizamos la petición a /users con fetch
-    const response = await fetch('/users');
+    //Realizamos la petición a /users con fetch y pasamos token de acceso a la cabecera
+    const response = await fetch('/users', {
+        headers: {
+            Authorization: localStorage.getItem('jwt')
+        }
+    });
     //LA respuesta que nos traiga el servidos debemos utilizar el metodo .json para que nos devuelva un objeto
     const users = await response.json();
     //Creamos una plantilla para mostrar los nombres
@@ -43,6 +47,7 @@ const getUsers = async() => {
         userNode.onclick = async e => {
             await fetch(`/users/${user._id}`, {
                 method: 'DELETE',
+                Authorization: localStorage.getItem('jwt')
             })
             userNode.parentNode.remove();
             alert('Eliminado con exito');
@@ -73,7 +78,9 @@ const addForListener = () => {
                 //Transformados el objeto data en string para poder enviarlo a mongodb desde el servidos de express
                 body: JSON.stringify(data),
                 headers: {
-                    'Content-type': 'application/json'
+                    'Content-type': 'application/json',
+                    Authorization: localStorage.getItem('jwt')
+
                 }
             })
             //Con el metodo reset limpiamos el formulario
@@ -133,11 +140,22 @@ const addRegistirListener = () => {
             const errorNode = document.getElementById('error')
             errorNode.innerHTML = responseData;
         } else {
+            //Almacenar token en local estorage. Se debe usar jwt y la palabra `Bearer ` separada de un espacio 
+            localStorage.setItem('jwt', `Bearer ${responseData}`);
+            userPage();
             console.log(responseData);
+
+
         }
     }
 }
-const gotoLoginListener = () => {}
+const gotoLoginListener = () => {
+    const gotoLogin = document.getElementById('login');
+    gotoLogin.onclick = (e) => {
+        e.preventDefault();
+        loginPage();
+    }
+}
 
 const registerPage = () => {
     //Llamamos la función que cargara el template Registro
@@ -205,6 +223,8 @@ const addLoginListener = () => {
             const errorNode = document.getElementById('error')
             errorNode.innerHTML = responseData;
         } else {
+            localStorage.setItem('jwt', `Bearer ${responseData}`);
+            userPage();
             console.log(responseData);
         }
     }
